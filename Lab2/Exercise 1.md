@@ -22,15 +22,15 @@
       ex:  (such as: list_add_before(&free_list, &(p->page_link)); 
 
                 6. 更新 -- sum the number of free mem block: nr_free+=n 
-
+       
                    【Qs】
-
+       
                    ​	(1) SetPageProperty 在干嘛-- 在设置空闲标记
-
+       
                    ​	(2) 这系列的页分配算法有锁吗？如果有，在哪啊
-
+       
                    ​	(3) list_next(&free_list) 功能是什么
-
+       
                    ​	(4) 为什么采用地址递增而不是大端往下走？
 
 4. ff_free_pages: 核心--合并
@@ -56,10 +56,27 @@
 
          
 
-         
+### Exercise 2
 
-         
+![](D:\ThirdYear\OS\Lab2\pdt.png)
 
-         
+ ![](D:\ThirdYear\OS\Lab2\pet.png)
 
-         
+ 由于页表或者页的物理地址都是4KB对齐的（低12位全是零），所以上图中只保留了物理基地址的高20位（bit[31:12]）。低12位可以安排其他用途。
+
+【P】：存在位。为1表示页表或者页位于内存中。否则，表示不在内存中，必须先予以创建或者从磁盘调入内存后方可使用。
+【R/W】：读写标志。为1表示页面可以被读写，为0表示只读。当处理器运行在0、1、2特权级时，此位不起作用。页目录中的这个位对其所映射的所有页面起作用。
+【U/S】：用户/超级用户标志。为1时，允许所有特权级别的程序访问；为0时，仅允许特权级为0、1、2的程序访问。页目录中的这个位对其所映射的所有页面起作用。
+【PWT】：Page级的Write-Through标志位。为1时使用Write-Through的Cache类型；为0时使用Write-Back的Cache类型。当CR0.CD=1时（Cache被Disable掉），此标志被忽略。对于我们的实验，此位清零。
+【PCD】：Page级的Cache Disable标志位。为1时，物理页面是不能被Cache的；为0时允许Cache。当CR0.CD=1时，此标志被忽略。对于我们的实验，此位清零。
+【A】：访问位。该位由处理器固件设置，用来指示此表项所指向的页是否已被访问（读或写），一旦置位，处理器从不清这个标志位。这个位可以被操作系统用来监视页的使用频率。
+【D】：脏位。该位由处理器固件设置，用来指示此表项所指向的页是否写过数据。
+【PS】：Page Size位。为0时，页的大小是4KB；为1时，页的大小是4MB（for normal 32-bit addressing ）或者2MB（if extended physical addressing is enabled).
+【G】：全局位。如果页是全局的，那么它将在高速缓存中一直保存。当CR4.PGE=1时，可以设置此位为1，指示Page是全局Page，在CR3被更新时，TLB内的全局Page不会被刷新。
+【AVL】：被处理器忽略，软件可以使用。
+
+![](D:\ThirdYear\OS\Lab2\struct.png)
+
+
+
+ 
